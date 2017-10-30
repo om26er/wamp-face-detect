@@ -11,5 +11,5 @@ def get_faces_coordinates(image_data):
     gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
 
     # Detect faces in the image
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(30, 30))
     return [{'x': int(x), 'y': int(y), 'w': int(w), 'h': int(h)} for (x, y, w, h) in faces]

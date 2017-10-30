@@ -4,14 +4,21 @@ import os
 import sys
 
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
+import cv2
+import numpy
 
 
 class MyComponent(ApplicationSession):
     async def onJoin(self, details):
         with open(photo, 'rb') as f:
             data = f.read()
-        result = await self.call("io.crossbar.detect_faces", data)
-        print(result)
+        faces = await self.call("io.crossbar.detect_faces", data)
+        image_raw = numpy.fromstring(data, dtype=numpy.uint8)
+        image_np = cv2.imdecode(image_raw, cv2.IMREAD_COLOR)
+        for f in faces:
+            cv2.rectangle(image_np, (f['x'], f['y']), (f['x'] + f['w'], f['y'] + f['h']),
+                          (0, 255, 0), 2)
+        cv2.imwrite('output.jpg', image_np)
         asyncio.get_event_loop().stop()
 
 
