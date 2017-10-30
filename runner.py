@@ -19,6 +19,9 @@ class MyComponent(ApplicationSession):
             cv2.rectangle(image_np, (f['x'], f['y']), (f['x'] + f['w'], f['y'] + f['h']),
                           (0, 255, 0), 2)
         cv2.imwrite('output.jpg', image_np)
+        self.leave()
+
+    def onDisconnect(self):
         asyncio.get_event_loop().stop()
 
 
