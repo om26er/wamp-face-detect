@@ -1,5 +1,5 @@
 import asyncio
-from os import environ
+from os import environ, path
 
 import cv2
 import numpy
@@ -9,7 +9,9 @@ from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
 def get_faces_coordinates(image_data):
     # Create the haar cascade
-    face_cascade = cv2.CascadeClassifier("cascades/haarcascade_frontalface_default.xml")
+    face_cascade = cv2.CascadeClassifier(
+        path.join(path.dirname(path.realpath(__file__)),
+                  "cascades/haarcascade_frontalface_default.xml"))
 
     image = numpy.fromstring(image_data, dtype=numpy.uint8)
     image_np = cv2.imdecode(image, cv2.IMREAD_COLOR)
