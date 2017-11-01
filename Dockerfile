@@ -5,7 +5,7 @@ USER root
 WORKDIR /workspace
 
 RUN    apt update \
-    && apt install python3-pip unzip wget git libsm6 libxrender1 -y \
+    && apt install python3-pip unzip wget git libsm6 libxext6 libxrender1 -y \
     && wget https://github.com/om26er/wamp-face-detect/archive/master.zip \
     && unzip master.zip \
     && pip3 install -r wamp-face-detect-master/app/requirements.txt \
