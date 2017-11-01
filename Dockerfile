@@ -17,4 +17,4 @@ RUN    apt update \
 
 WORKDIR /workspace/wamp-face-detect-master
 
-CMD ["crossbar", "start"]
+CMD ["python3", "-u", "app/server.py"]
