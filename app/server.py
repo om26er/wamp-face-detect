@@ -1,32 +1,12 @@
+import asyncio
 from os import environ
-from urllib.parse import urlparse
 
 import cv2
 import numpy
 
-from autobahn.asyncio.component import Component, run
-
-URL = urlparse(environ.get("AUTOBAHN_DEMO_ROUTER", u"ws://127.0.0.1:8080/ws"))
-component = Component(
-    transports=[
-        {
-            "type": "websocket",
-            "url": URL.geturl(),
-            "endpoint": {
-                "type": "tcp",
-                "host": "localhost",
-                "port": URL.port
-            },
-            "options": {
-                "open_handshake_timeout": 100,
-            }
-        },
-    ],
-    realm=environ.get("AUTOBAHN_DEMO_REALM", u"realm1"),
-)
+from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
 
-@component.register("io.crossbar.demo.cvengine.detect_faces")
 def get_faces_coordinates(image_data):
     # Create the haar cascade
     face_cascade = cv2.CascadeClassifier("cascades/haarcascade_frontalface_default.xml")
@@ -40,5 +20,16 @@ def get_faces_coordinates(image_data):
     return [{'x': int(x), 'y': int(y), 'w': int(w), 'h': int(h)} for (x, y, w, h) in faces]
 
 
+class MyComponent(ApplicationSession):
+    async def onJoin(self, details):
+        print('Joined session={}'.format(details.realm))
+        await self.register(get_faces_coordinates, "io.crossbar.demo.cvengine.detect_faces")
+
+    def onDisconnect(self):
+        asyncio.get_event_loop().stop()
+
+
 if __name__ == '__main__':
-    run([component])
+    runner = ApplicationRunner(environ.get("AUTOBAHN_DEMO_ROUTER", u"ws://127.0.0.1:8080/ws"),
+                               environ.get("AUTOBAHN_DEMO_REALM", u"realm1"))
+    runner.run(MyComponent)

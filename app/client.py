@@ -1,7 +1,6 @@
 import asyncio
 import argparse
-import os
-from os import environ
+from os import environ, path
 import sys
 
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
@@ -30,8 +29,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file')
     args = parser.parse_args()
-    photo = os.path.abspath(os.path.expanduser(args.file))
-    if not os.path.exists(photo):
+    photo = path.abspath(path.expanduser(args.file))
+    if not path.exists(photo):
         print('File "{}" does not exist'.format(photo))
         sys.exit(1)
     runner = ApplicationRunner(environ.get("AUTOBAHN_DEMO_ROUTER", u"ws://127.0.0.1:8080/ws"),
