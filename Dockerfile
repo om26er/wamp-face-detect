@@ -10,7 +10,7 @@ RUN    apt update \
     && unzip master.zip \
     && pip3 install -r wamp-face-detect-master/app/requirements.txt \
     && apt clean \
-    && apt purge python3-pip unzip git wget -y \
+    && apt purge python3-pip -y \
     && apt autoremove -y \
     && rm -rf ~/.cache/pip \
     && rm -rf /var/lib/apt/lists/
