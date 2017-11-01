@@ -1,6 +1,7 @@
 import asyncio
 import argparse
 import os
+from os import environ
 import sys
 
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
@@ -12,7 +13,7 @@ class MyComponent(ApplicationSession):
     async def onJoin(self, details):
         with open(photo, 'rb') as f:
             data = f.read()
-        faces = await self.call("io.crossbar.detect_faces", data)
+        faces = await self.call("io.crossbar.demo.cvengine.detect_faces", data)
         image_raw = numpy.fromstring(data, dtype=numpy.uint8)
         image_np = cv2.imdecode(image_raw, cv2.IMREAD_COLOR)
         for f in faces:
@@ -33,5 +34,6 @@ if __name__ == '__main__':
     if not os.path.exists(photo):
         print('File "{}" does not exist'.format(photo))
         sys.exit(1)
-    runner = ApplicationRunner("ws://127.0.0.1:8080/ws", u"realm1")
+    runner = ApplicationRunner(environ.get("AUTOBAHN_DEMO_ROUTER", u"ws://127.0.0.1:8080/ws"),
+                               environ.get("AUTOBAHN_DEMO_REALM", u"realm1"))
     runner.run(MyComponent)
